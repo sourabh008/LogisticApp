@@ -1,0 +1,12 @@
+.allInput {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-evenly; */
+  /* margin: 5%; */
+  overflow: auto;
+}
+.input_flex{
+    display: flex;
+    flex-direction: row;
+    padding: .5%;
+}

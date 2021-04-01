@@ -1,24 +1,40 @@
-import logo from './logo.svg';
+import { React,useState } from "react";
 import './App.css';
+import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
 
+// import Spinner from "./components/Spinner"
+import Header from "./Screens/components/header/Header"
+import Navbar from "./Screens/components/navbar/Navbar"
+import Home from "./Screens/Home/Home"
+import CustomerSupport from "./Screens/CustomerSupport/CustomerSupport"
+import DhlNotification from "./Screens/DhlNotification/DhlNotification"
+import CustomerPayments from "./Screens/CustomePayments/CustomerPayments"
 function App() {
+  // const [loading, setLoading] = useState(true);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+   <div>
+     <div>
+       <BrowserRouter>
+       <Header/>
+       <Navbar/>
+       <Switch>
+         <Route exact path="/">
+         <Home/>
+         </Route>
+         <Route path="/customer_support">
+         <CustomerSupport/>
+         </Route>
+         <Route path="/dhl_notification_email">
+         <DhlNotification/>
+         </Route>
+         <Route path="/customer_payments">
+         <CustomerPayments/>
+         </Route>
+       </Switch>
+       </BrowserRouter>
+     </div>
+
+   </div>
   );
 }
 
