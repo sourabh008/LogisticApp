@@ -1,0 +1,27 @@
+.list{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top:10px
+}
+ul{
+    list-style-type: none;
+    li{
+        border:1px solid gray;
+        margin-top: 8px;
+        box-shadow: 4px 1px 1px 1px #d8d5d5;
+        min-height: 15px;
+        width: 500px;
+        border-radius: 10px;
+
+    }
+}
+.display{
+    display: flex;
+    justify-content: space-between;
+}
+.buttons{
+    margin-top: 8px;
+    margin-left: 5px;
+}

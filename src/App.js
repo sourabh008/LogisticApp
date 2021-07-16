@@ -1,41 +1,96 @@
-import { React,useState } from "react";
-import './App.css';
-import { BrowserRouter, Router, Route, Switch } from "react-router-dom";
+import { React, useEffect, useCallback, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Form from "rc-field-form";
 
-// import Spinner from "./components/Spinner"
-import Header from "./Screens/components/header/Header"
-import Navbar from "./Screens/components/navbar/Navbar"
-import Home from "./Screens/Home/Home"
-import CustomerSupport from "./Screens/CustomerSupport/CustomerSupport"
-import DhlNotification from "./Screens/DhlNotification/DhlNotification"
-import CustomerPayments from "./Screens/CustomePayments/CustomerPayments"
-function App() {
-  // const [loading, setLoading] = useState(true);
-  return (
-   <div>
-     <div>
-       <BrowserRouter>
-       <Header/>
-       <Navbar/>
-       <Switch>
-         <Route exact path="/">
-         <Home/>
-         </Route>
-         <Route path="/customer_support">
-         <CustomerSupport/>
-         </Route>
-         <Route path="/dhl_notification_email">
-         <DhlNotification/>
-         </Route>
-         <Route path="/customer_payments">
-         <CustomerPayments/>
-         </Route>
-       </Switch>
-       </BrowserRouter>
-     </div>
+import Button from "./components/Button";
+import Modal from "./components/Model/Modal";
+import { fetchPosts, addPost, deletePost, updatePost } from "./redux/action";
+import DisplayPost from "./components/Display";
 
-   </div>
+import "./app.scss";
+
+const App = () => {
+  const dispatch = useDispatch();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isUpdate, setIsUpdate] = useState(false);
+  const [updatePostId,setUpdatePostId]=useState('')
+  const [form] = Form.useForm();
+
+   const posts = useSelector((state) => state.get('posts'));
+   const error = useSelector((state) => state.get('error'));
+   const loading = useSelector((state) => state.get('loading'));
+
+  useEffect(() => {
+    dispatch(fetchPosts());
+  }, [dispatch]);
+
+  const toggleModal = useCallback(() => {
+    setModalOpen((prevState) => !prevState);
+    form.resetFields();
+    setIsUpdate(false);
+  }, [form]);
+
+  const getFormValue = useCallback(
+    (values) => {
+      dispatch(addPost(values));
+      setModalOpen(false);
+      form.resetFields();
+    },
+    [dispatch, form]
   );
-}
+  
+  const postDelete = useCallback(
+    (id) => () => {
+      dispatch(deletePost(id));
+    },
+    [dispatch]
+  );
+
+  const postUpdate = useCallback(
+    (post) => () => {
+      setModalOpen((prevState) => !prevState);
+      setIsUpdate((prevState) => !prevState);
+      setUpdatePostId(post.id);
+      form.setFieldsValue(post);
+    },
+    [form]
+  );
+
+  const getUpdatedFormValue = useCallback((values) => {
+    dispatch(updatePost({...values,id:updatePostId}))
+    setModalOpen((prevState) => !prevState);
+    setIsUpdate((prevState) => !prevState);
+
+  }, [dispatch, updatePostId]);
+
+  return (
+    <div className="mainDiv">
+      <Button
+        color="primary"
+        text="Add New Post"
+        oncilck={toggleModal}
+        className="create_post_button"
+      />
+
+      <Modal
+        modalState={modalOpen}
+        closeModal={toggleModal}
+        getFormValue={isUpdate ? getUpdatedFormValue : getFormValue}
+        form={form}
+        isUpdate={isUpdate}
+      />
+      {loading ? (
+        <p>Loading......</p>
+      ) : (
+        <DisplayPost
+          data={posts}
+          postUpdate={postUpdate}
+          postDelete={postDelete}
+        />
+      )}
+      {error && <p>Something went wrong</p>}
+    </div>
+  );
+};
 
 export default App;
